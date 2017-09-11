@@ -22,7 +22,7 @@ from lib.CliPrinter import *
 
 # GLOBALS
 
-SLOW = True
+SLOW = False
 LINE = '----------------------------------------------------------------------'
 
 def __main__():
@@ -42,9 +42,133 @@ def __main__():
     singleByteXORcrack('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')
 
     ChallengeTitle(1,4)
-    detectSingleCharXOR('Set1Challenge4.txt')
+    if SLOW: detectSingleCharXOR('Set1Challenge4.txt')
+
+    ChallengeTitle(1,5)
+    repeatKeyXOR("Burning 'em, if you ain't quick and nimble\n"
+        + "I go crazy when I hear a cymbal",
+        'ICE',
+        '0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272'
+        + 'a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f')
+
+    ChallengeTitle(1,6, 'Hamming distance')
+    # Sub challenge :: Hamming Distance
+    s1 = toBin('this is a test')
+    s2 = toBin('wokka wokka!!!')
+    print('String1 : %s\nString2 : %s' % (s1, s2))
+    PrintResult(37, (hammDist(s1, s2)))
+
+    ChallengeTitle(1,6)
+    repeatKeyXORcrack('Set1Challenge6.txt', 2, 40)
 
 
+
+def repeatKeyXORcrack(fn, minKey, maxKey):
+    print('File       : %s' % fn)
+    print('Key-Length : %d - %d' % (minKey, maxKey))
+    print(LINE)
+    b64 = read_file(fn)
+    #print('base64 of crypt repeating-key XOR : %s' % b64)
+    #print(base64ToBytes(b64))
+    b = bytesToHex(base64ToBytes(b64))
+    binStr = bytesToBin(b)
+    print(len(binStr))
+    keysize = []
+    
+
+    for s in range(minKey, maxKey + 1):
+        sb = s*8
+        hDist = float()
+        for i in range(20):
+            ib = (s * 8) * i
+            it = (s * 8) * (i+1)
+            iz = it + (s * 8)
+            #print('Byte nr: %d : %d :: %d : %d' % (ib,it,it,iz))
+            hDist += hammDist(binStr[ib:it],binStr[it:iz])
+        keysize.append(((hDist/s), s))
+
+    sort = sorted(keysize, key=lambda x: x[0], reverse=False)
+
+    print('>> Normalized edit-distance :: top %d results :' % 5)          
+    best = None                                                                
+    for i in range(5):                                                        
+        val = sort[i]                                             
+        if i == 0: best = sort[i] 
+        print('>> LevenshteinDistance: %f :: Key-Lengh: %d ' % (val[0], val[1]))
+    print(LINE)
+    print('Best result: dist: %s :: Key-Lenght: %s' % best)
+    PrintResult(best[1], best[1])
+    ks = best[1]
+    
+    # Crack it
+    # 5
+    #cb = [b[i % ks] for i in range(0, len(b))]
+    #print(len(b))
+    #print(b)
+    # 6
+    sb = [''] * ks
+    for i in range(0,int(len(b)),2):
+        sb[(int(i/2) % ks)] += b[i:i+2].decode('ascii')
+        #print(b[i:i+2].decode('ascii'))
+    #for i, block in enumerate(cb):
+    #    sb[i % ks] += block
+    print(b)
+    print(b[0:58])
+    print(b[58:116])
+    print(b[116:174])
+    print(sb)
+    
+    # solve Keychar 1 .. n
+    ckey = ''
+    for elmt in sb:
+        #print(elmt)
+        #print(list(elmt))
+        #hexstr = ''.join(hex(b)[2:] for b in elmt)
+        #hexstr = ''.join(format(x, '02x') for x in elmt)
+        #hexstr = elmt.decode('ascii')
+        #print(hexstr)
+        #print(len(elmt))
+
+        #print(singleByteXORcrack(elmt))
+        #ckey += bytesXORcrack(elmt)[1]
+        print( bytesXORcrack(elmt))
+    #print(ckey)
+    return
+    #key to right size
+    key1 = bytes('inoi', 'ascii')
+    key = (key1 * ((len(b) // len(key1)) + 1))[:len(b)]
+    res = bXOR(b, key)
+    print(res)
+
+
+def read_file(path):
+    fobj = open(path, encoding='latin-1')
+    ret = ''
+    for line in fobj:
+        ret += line.strip()
+    return ret
+
+
+
+def repeatKeyXOR(text, key, test):
+    print('Input  : %s' % text)
+    print('Key    : %s' % key)
+    print('Test   : %s' % test)
+    print(LINE)
+    hxtext = bytes(text.strip(), encoding='latin-1')
+    hxkey  = bytes(key, encoding='latin-1')
+    txlen  = len(hxtext)
+    
+    # repeat key to txlen size
+    hxkeyl = (hxkey * ((txlen // len(hxkey)) + 1))[:txlen]
+    
+    res = bXOR(hxtext, hxkeyl)
+    hxtest = toHex(test.strip())
+    print('test: %s' % hxtest)
+    print('res:  %s' % res)
+    PrintResult(hxtest, res)
+
+    
 
 def detectSingleCharXOR(fn):
     top = 5
@@ -67,8 +191,18 @@ def detectSingleCharXOR(fn):
     PrintResult(res[0][2], res[0][2])
 
 
+def bytesXORcrack(instr):
+    inhex = toHex(instr)
+    inlen = len(inhex)
+    #res = XORcrack(inhex, maxp=2, doPrint=True)
+    res = singleXORcrack(inhex, len(instr), maxp=2, doPrint=False)
+    #print(line)
+    #print('>> Score: %d :: Key: %s' % (res[0], res[1]))
+    return res
+
 def singleByteXORcrack(instr):
     print('Input  : %s' % instr)
+    print(len(instr))
     inhex = toHex(instr)
     inlen = len(inhex)
     print(line)
@@ -77,7 +211,6 @@ def singleByteXORcrack(instr):
     print('>> Best result: %s' % res[2])
     # Result check is cheated because we dont have an answer from the challenge
     PrintResult(res[2], res[2])
-
 
 
 def fixedXOR(instr, bxor, test):
