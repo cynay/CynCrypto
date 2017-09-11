@@ -67,6 +67,10 @@ def bytesToHex(b):
     return binascii.hexlify(b)
 
 
+def bytesToAscii(b):
+    # ToDo
+    return b
+
 def bytesToBin(b):
     binStr = ''
     for byte in range(0, len(b),2):
@@ -136,16 +140,18 @@ def singleXORcrack(b1, inlen, maxp=None, doPrint=None):
         b2 = bytes(char * inlen, 'ascii')
         results[char] = bXOR(b1, b2)
     
+
     scores = []
     for key in results:
         #print(results[key], file=open('out.txt', 'a'))
         scores.append((
             (letterScoreEN(results[key])
-            + wordScoreEN(results[key]))
+            + wordScoreEN(results[key])
+            + mostLetterScoreEN(results[key]))
             , key))
 
     res = sorted(scores, key=lambda x: x[0], reverse=True)
-
+    
     if doPrint: print('>> Single XOR crack :: top %d results :' % top)
     best = b''
     for i in range(top):
@@ -185,6 +191,10 @@ def mostLetterScoreEN(inbytes):
         score += 7 if chr(c) == 'o' else 0
         score += 7 if chr(c) == 'i' else 0
         score += 6 if chr(c) == 'n' else 0
+        
+        score -= 6 if chr(c) == '#' else 0
+        score -= 10 if chr(c) == ')' else 0
+        score -= 10 if chr(c) == '+' else 0
         
     return score
 

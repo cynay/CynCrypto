@@ -22,8 +22,10 @@ from lib.CliPrinter import *
 
 # GLOBALS
 
-SLOW = False
-LINE = '----------------------------------------------------------------------'
+DEBUG = True
+SLOW  = False
+LINE = '-' * 80
+HEAD = '#' * 80
 
 def __main__():
     """ Testing Docstring"""
@@ -112,11 +114,6 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
         #print(b[i:i+2].decode('ascii'))
     #for i, block in enumerate(cb):
     #    sb[i % ks] += block
-    print(b)
-    print(b[0:58])
-    print(b[58:116])
-    print(b[116:174])
-    print(sb)
     
     # solve Keychar 1 .. n
     ckey = ''
@@ -130,16 +127,18 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
         #print(len(elmt))
 
         #print(singleByteXORcrack(elmt))
-        #ckey += bytesXORcrack(elmt)[1]
-        print( bytesXORcrack(elmt))
-    #print(ckey)
-    return
+        ckey += bytesXORcrack(elmt)[1]
+        #print( bytesXORcrack(elmt))
+    print('>> Found Key: %s' % ckey)
+    PrintResult(ckey, 'Terminator X: Bring the noise')
+    
     #key to right size
-    key1 = bytes('inoi', 'ascii')
+    key1 = bytes(ckey, 'ascii')
     key = (key1 * ((len(b) // len(key1)) + 1))[:len(b)]
-    res = bXOR(b, key)
-    print(res)
-
+    res = bXOR(bytesToHex(b), bytesToHex(key))
+    myres = bytesToHex(bXOR(b,key))
+    mk = toHex(key.decode('ascii'))
+    mb = b.decode('ascii')
 
 def read_file(path):
     fobj = open(path, encoding='latin-1')
@@ -179,7 +178,7 @@ def detectSingleCharXOR(fn):
     for line in fobj:
         bline = toHex(line[:-1])
         llen = len(bline)
-        scores.append(singleXORcrack(bline, llen, maxp=1, doPrint=False))
+        scores.append(singleXORcrack(bline, llen, maxp=1, doPrint=True))
 
     res = sorted(scores, key=lambda x: x[0], reverse=True)                         
                                                                                    
@@ -195,8 +194,8 @@ def bytesXORcrack(instr):
     inhex = toHex(instr)
     inlen = len(inhex)
     #res = XORcrack(inhex, maxp=2, doPrint=True)
-    res = singleXORcrack(inhex, len(instr), maxp=2, doPrint=False)
-    #print(line)
+    res = singleXORcrack(inhex, inlen, maxp=3, doPrint=False)
+    #print(LINE)
     #print('>> Score: %d :: Key: %s' % (res[0], res[1]))
     return res
 
