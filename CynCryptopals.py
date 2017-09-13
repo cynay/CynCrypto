@@ -117,7 +117,8 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     
     # solve Keychar 1 .. n
     ckey = ''
-    for elmt in sb:
+    ctext = []
+    for i,elmt in enumerate(sb):
         #print(elmt)
         #print(list(elmt))
         #hexstr = ''.join(hex(b)[2:] for b in elmt)
@@ -128,17 +129,43 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
 
         #print(singleByteXORcrack(elmt))
         ckey += bytesXORcrack(elmt)[1]
+        ctext.append(bytesXORcrack(elmt)[2].decode('ascii'))
         #print( bytesXORcrack(elmt))
     print('>> Found Key: %s' % ckey)
     PrintResult(ckey, 'Terminator X: Bring the noise')
     
+    rtext = ''
+    for i in range(ks):
+        for c in range(len(ctext)):
+            rtext += ''.join(ctext[c][i:i+1])
+    
+    print(rtext)
+    return
+
     #key to right size
-    key1 = bytes(ckey, 'ascii')
+    key1 = bytesToHex(bytes(ckey, 'ascii'))
+    print(key1)
+    print(len(key1))
     key = (key1 * ((len(b) // len(key1)) + 1))[:len(b)]
-    res = bXOR(bytesToHex(b), bytesToHex(key))
+
+    print(len(key))
+    print(len(b))
+
+    res = bXOR(b, key)
+    print(res)
+    return
     myres = bytesToHex(bXOR(b,key))
-    mk = toHex(key.decode('ascii'))
-    mb = b.decode('ascii')
+    print(type(myres))
+    res = ''
+    for c in range(len(myres)):
+        res += ''.join(map(chr,myres[c:c+1]))
+
+    #print(res)
+    #print(''.join(map(chr,myres)))
+    #mk = toHex(key.decode('ascii'))
+    #mb = b.decode('ascii')
+
+
 
 def read_file(path):
     fobj = open(path, encoding='latin-1')
