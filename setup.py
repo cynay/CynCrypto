@@ -10,13 +10,13 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='sample',
+    name='CynCrypto',
     version='0.1',
-    description='Sample package for Python-Guide.org',
+    description='Matasano cryptopals challenges by cYnaY',
     long_description=readme,
     author='Yannic Schneider',
     author_email='v@vendetta.ch',
-    url='https://github.com/cynay/xxx',
+    url='https://github.com/cynay/CynCrypto',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
 )

@@ -1,2 +1,4 @@
-nose
 sphinx
+nose
+colorama
+crypto
