@@ -31,12 +31,11 @@ def __main__():
     """ Testing Docstring"""
     setup_logging(app_name = APP_NAME)
     log = logging.getLogger(APP_NAME + __name__)
-    log.info('Test')
 
     SetTitle(1)
     ChallengeTitle(1,1)
-    convertHexToBase64(
-        '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d',
+    convertHexToBase64('49276d206b696c6c696e6720796f757220627261696e206c696b652'
+        + '06120706f69736f6e6f7573206d757368726f6f6d',
         'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t')
 
     ChallengeTitle(1,2)
@@ -45,7 +44,8 @@ def __main__():
         '746865206b696420646f6e277420706c6179')
     
     ChallengeTitle(1,3)
-    singleByteXORcrack('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')
+    singleByteXORcrack('1b37373331363f78151b7f2b783431333d78397828372d363c78373'
+        + 'e783a393b3736')
 
     ChallengeTitle(1,4)
     if SLOW: detectSingleCharXOR('Set1Challenge4.txt')
@@ -54,14 +54,15 @@ def __main__():
     repeatKeyXOR("Burning 'em, if you ain't quick and nimble\n"
         + "I go crazy when I hear a cymbal",
         'ICE',
-        '0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272'
-        + 'a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f')
+        '0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a262263242727'
+        + '65272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326'
+        + '302e27282f')
 
-    ChallengeTitle(1,6, 'Hamming distance')
     # Sub challenge :: Hamming Distance
+    ChallengeTitle(1,6, 'Hamming distance')
     s1 = toBin('this is a test')
     s2 = toBin('wokka wokka!!!')
-    print('String1 : %s\nString2 : %s' % (s1, s2))
+    print('String1: %s\nString2: %s' % (s1, s2))
     PrintResult(37, (hammDist(s1, s2)))
 
     ChallengeTitle(1,6)
@@ -69,14 +70,34 @@ def __main__():
 
     ChallengeTitle(1,7)
     decryptAES_mode_ECB('Set1Challenge7.txt', 'YELLOW SUBMARINE')
+    
+    ChallengeTitle(1,8)
+    find_AES_mode_ECB('Set1Challenge8.txt')
 
+
+def find_AES_mode_ECB(fn):
+    print('File: %s' % fn)
+    print(LINE)
+    b64 = read_file(fn)
+    for i, line in enumerate(b64):
+        bl = decrypt_AES_ECB(line,'YELLOW SUBMARINE')
+        bn = len(bl) / 16
+        blocks = []
+        for b in range(int(bn)):
+            blocks.append(bl[b*16:(b*16)+16])
+        
+        # check for dupes
+        dupes = [x for n, x in enumerate(blocks) if x in blocks[:n]]
+        if dupes:
+            print('Duplicate blocks found in line nr: %d , dupes: %s' % 
+                (i, dupes))
 
 
 def decryptAES_mode_ECB(fn, key):
     print('File: %s' % fn)
     print('Key : %s' % key)
     print(LINE)
-    b64 = read_file(fn)
+    b64 = read_file_strip(fn)
     msg = decrypt_AES_ECB(b64, key)
     print(str(msg, 'ascii'))
     
@@ -86,7 +107,7 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     print('File       : %s' % fn)
     print('Key-Length : %d - %d' % (minKey, maxKey))
     print(LINE)
-    b64 = read_file(fn)
+    b64 = read_file_strip(fn)
     #print('base64 of crypt repeating-key XOR : %s' % b64)
     #print(base64ToBytes(b64))
     b = bytesToHex(base64ToBytes(b64))
@@ -161,14 +182,15 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     return True
 
 
-
 def read_file(path):
+    return open(path, encoding='latin-1')
+
+def read_file_strip(path):
     fobj = open(path, encoding='latin-1')
     ret = ''
     for line in fobj:
         ret += line.strip()
     return ret
-
 
 
 def repeatKeyXOR(text, key, test):

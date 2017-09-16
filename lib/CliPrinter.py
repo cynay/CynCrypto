@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: ascii -*-
-
 """
 Module Docstring
 Docstrings: http://www.python.org/dev/peps/pep-0257/
@@ -35,7 +32,8 @@ def ChallengeTitle(snr, cnr, subtitle=None):
     if sub == ' ' : 
         print('>> Cryptopals :: SET:%d :: Challenge: %d' % (snr, cnr))
     else:
-        print('>> Cryptopals :: SET:%d :: Challenge: %d :: Sub: %s' % (snr, cnr, sub))                           
+        print('>> Cryptopals :: SET:%d :: Challenge: %d :: Sub: %s' 
+            % (snr, cnr, sub))   
     print(LINE + Style.RESET_ALL) 
 
 
@@ -45,6 +43,8 @@ def PrintResult(btest, bresult):
     print('>> Result bytes :: %s' % bresult)
     check = True if btest == bresult else False 
     if check:
-        print(Fore.GREEN + '>> Result check ::  %s' % 'CORRECT' + Style.RESET_ALL)  
+        print(Fore.GREEN + '>> Result check ::  %s' % 'CORRECT' 
+            + Style.RESET_ALL)  
     else:
-        print(Fore.RED + '>> Result check ::  %s' % 'WRONG' + Style.RESET_ALL)                           
+        print(Fore.RED + '>> Result check ::  %s' % 'WRONG' 
+            + Style.RESET_ALL)                           

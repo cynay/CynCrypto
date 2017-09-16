@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: ascii -*-
-
 """
 Module Docstring
 Docstrings: http://www.python.org/dev/peps/pep-0257/
@@ -17,6 +14,7 @@ __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
 ## Code goes here.
 #
 import string
+import struct
 import codecs
 import base64
 import binascii
@@ -106,7 +104,29 @@ ALPHA_DE_FREQ = {
     'y': 0.039,
     'z': 1.134 }
 
-# Conversions
+# Conversions with struct
+# struct.pack(fmt, v1, v2, ...)
+# Return a bytes object containing the values v1, v2, ... packed according to 
+# the format string fmt. The arguments must match the values required by the 
+# format exactly.
+
+# struct.unpack(fmt, buffer)
+# Unpack from the buffer buffer (presumably packed by pack(fmt, ...)) 
+# according to the format string fmt. The result is a tuple even if it 
+# contains exactly one item. The buffer’s size in bytes must match the size 
+# required by the format, as reflected by calcsize().
+def bToHexB2(b):
+    return unpack('B',b)
+
+def bToHexB(b):
+    return binascii.hexlify(b)
+
+def bToHexS(b):
+    return binascii.hexlify(b).decode('ascii')
+
+
+
+# Conversions old 
 
 # String to ...
 def toBin(input):
