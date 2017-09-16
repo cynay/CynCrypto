@@ -15,20 +15,24 @@ __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
 #
 ## Code goes here.
 #
-
+from lib.CynLogger import *
 from lib.CynCrypto import *
 from lib.CliPrinter import *
 
 
 # GLOBALS
-
-DEBUG = True
-SLOW  = False
-LINE = '-' * 80
-HEAD = '#' * 80
+APP_NAME    = 'CynCrypto.'
+DEBUG       = True
+SLOW        = False
+LINE        = '-' * 80
+HEAD        = '#' * 80
 
 def __main__():
     """ Testing Docstring"""
+    setup_logging(app_name = APP_NAME)
+    log = logging.getLogger(APP_NAME + __name__)
+    log.info('Test')
+
     SetTitle(1)
     ChallengeTitle(1,1)
     convertHexToBase64(
