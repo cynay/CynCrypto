@@ -18,28 +18,30 @@ __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
 import colorama
 from colorama import Fore, Back, Style
 
-line = '----------------------------------------------------------------------'
+LINE = '-' * 80
+HEAD = '#' * 80
 
 def SetTitle(nr):
     """ Testing Docstring"""
-    print(Fore.CYAN + line) 
+    print(Fore.MAGENTA + HEAD) 
     print('>> Cryptopals crypto challenge :: SET:%d ' % nr)                           
+    print(Fore.MAGENTA + HEAD + Style.RESET_ALL) 
 
 
 def ChallengeTitle(snr, cnr, subtitle=None):
     """ Testing Docstring"""
     sub = ' ' if subtitle == None else subtitle
-    print(line) 
+    print(LINE) 
     if sub == ' ' : 
         print('>> Cryptopals :: SET:%d :: Challenge: %d' % (snr, cnr))
     else:
         print('>> Cryptopals :: SET:%d :: Challenge: %d :: Sub: %s' % (snr, cnr, sub))                           
-    print(line + Style.RESET_ALL) 
+    print(LINE + Style.RESET_ALL) 
 
 
 def PrintResult(btest, bresult):
     """ Testing Docstring"""
-    print(Fore.CYAN + line)
+    print(Fore.CYAN + LINE)
     print('>> Result bytes :: %s' % bresult)
     check = True if btest == bresult else False 
     if check:

@@ -7,7 +7,7 @@ Docstrings: http://www.python.org/dev/peps/pep-0257/
 """
 
 __author__ = 'Yannic Schneider (v@vendetta.ch)'
-__copyright__ = 'Copyright (c) 20xx Yannic Schneider'
+__copyright__ = 'Copyright (c) 2017 Yannic Schneider'
 __license__ = 'WTFPL'
 __vcs_id__ = '$Id$'
 __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
@@ -63,6 +63,19 @@ def __main__():
     ChallengeTitle(1,6)
     repeatKeyXORcrack('Set1Challenge6.txt', 2, 40)
 
+    ChallengeTitle(1,7)
+    decryptAES_mode_ECB('Set1Challenge7.txt', 'YELLOW SUBMARINE')
+
+
+
+def decryptAES_mode_ECB(fn, key):
+    print('File: %s' % fn)
+    print('Key : %s' % key)
+    print(LINE)
+    b64 = read_file(fn)
+    msg = decrypt_AES_ECB(b64, key)
+    print(str(msg, 'ascii'))
+    
 
 
 def repeatKeyXORcrack(fn, minKey, maxKey):
@@ -140,30 +153,8 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
             rtext += ''.join(ctext[c][i:i+1])
     
     print(rtext)
-    return
-
-    #key to right size
-    key1 = bytesToHex(bytes(ckey, 'ascii'))
-    print(key1)
-    print(len(key1))
-    key = (key1 * ((len(b) // len(key1)) + 1))[:len(b)]
-
-    print(len(key))
-    print(len(b))
-
-    res = bXOR(b, key)
-    print(res)
-    return
-    myres = bytesToHex(bXOR(b,key))
-    print(type(myres))
-    res = ''
-    for c in range(len(myres)):
-        res += ''.join(map(chr,myres[c:c+1]))
-
-    #print(res)
-    #print(''.join(map(chr,myres)))
-    #mk = toHex(key.decode('ascii'))
-    #mb = b.decode('ascii')
+    
+    return True
 
 
 
@@ -228,13 +219,12 @@ def bytesXORcrack(instr):
 
 def singleByteXORcrack(instr):
     print('Input  : %s' % instr)
-    print(len(instr))
     inhex = toHex(instr)
     inlen = len(inhex)
-    print(line)
+    print(LINE)
     res = singleXORcrack(inhex, inlen, maxp=5, doPrint=True)
-    print(line)
-    print('>> Best result: %s' % res[2])
+    print(LINE)
+    print('>> Best result: %s' % res[2].decode('ascii'))
     # Result check is cheated because we dont have an answer from the challenge
     PrintResult(res[2], res[2])
 

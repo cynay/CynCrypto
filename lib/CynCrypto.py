@@ -7,12 +7,10 @@ Docstrings: http://www.python.org/dev/peps/pep-0257/
 """
 
 __author__ = 'Yannic Schneider (v@vendetta.ch)'
-__copyright__ = 'Copyright (c) 20xx Yannic Schneider'
+__copyright__ = 'Copyright (c) 2017 Yannic Schneider'
 __license__ = 'WTFPL'
 __vcs_id__ = '$Id$'
 __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
-
-
 
 
 #
@@ -24,6 +22,8 @@ import base64
 import binascii
 import distance
 
+from Crypto.Cipher import AES
+
 # GLOBALS
 
 ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz'
@@ -32,7 +32,11 @@ ALPHA_PRINT = string.printable
 
 ALPHA_EN_MOST_UPPER = 'ETAOIN SHRDLU'
 ALPHA_EN_MOST_LOWER = 'etaoin shrdlu'
-ALPHA_EN_MOST = ALPHA_EN_MOST_LOWER + ALPHA_EN_MOST_UPPER
+ALPHA_EN_MOST       = ALPHA_EN_MOST_LOWER + ALPHA_EN_MOST_UPPER
+
+ALPHA_DE_MOST_UPPER = 'ENISR ATDHU'
+ALPHA_DE_MOST_LOWER = 'enisr atdhu'
+ALPHA_DE_MOST       = ALPHA_DE_MOST_LOWER + ALPHA_DE_MOST_UPPER
 
 WORDS_EN_MOST = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I', 
   'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 
@@ -46,6 +50,61 @@ WORDS_EN_MOST = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I',
   'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 
   'us']
 
+ALPHA_EN_FREQ = {
+    'a': 12.702,
+    'b': 1.492,
+    'c': 2.782,
+    'd': 4.253,
+    'e': 12.702,
+    'f': 2.228,
+    'g': 2.015,
+    'h': 6.094,
+    'i': 6.966,
+    'j': 0.153,
+    'k': 0.772,
+    'l': 4.025,
+    'm': 2.406,
+    'n': 6.749,
+    'o': 7.507,
+    'p': 1.929,
+    'q': 0.095,
+    'r': 5.987,
+    's': 6.686,
+    't': 15.978,
+    'u': 1.183,
+    'v': 0.824,
+    'w': 5.497,
+    'x': 0.045,
+    'y': 0.763,
+    'z': 0.045 }
+
+ALPHA_DE_FREQ = {
+    'a': 6.516,
+    'b': 1.886,
+    'c': 2.732,
+    'd': 5.076,
+    'e': 16.396,
+    'f': 1.656,
+    'g': 3.009,
+    'h': 4.577,
+    'i': 6.550,
+    'j': 0.268,
+    'k': 1.417,
+    'l': 3.437,
+    'm': 2.534,
+    'n': 9.776,
+    'o': 2.494,
+    'p': 0.670,
+    'q': 0.018,
+    'r': 7.003,
+    's': 7.270,
+    't': 6.154,
+    'u': 4.166,
+    'v': 0.846,
+    'w': 1.921,
+    'x': 0.034,
+    'y': 0.039,
+    'z': 1.134 }
 
 # Conversions
 
@@ -215,3 +274,9 @@ def wordScoreEN(inbytes):
         score += 10 if word in WORDS_EN_MOST else 0
     
     return score
+
+
+def decrypt_AES_ECB(b64, key):
+    obj = AES.new(key, AES.MODE_ECB)
+    b = base64.b64decode(b64)
+    return obj.decrypt(b)
