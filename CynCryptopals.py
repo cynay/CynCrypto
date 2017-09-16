@@ -18,6 +18,7 @@ __version__ = '0.1' #Versioning: http://www.python.org/dev/peps/pep-0386/
 from lib.CynLogger import *
 from lib.CynCrypto import *
 from lib.CliPrinter import *
+from lib.CynUtil import *
 
 
 # GLOBALS
@@ -48,7 +49,7 @@ def __main__():
         + 'e783a393b3736')
 
     ChallengeTitle(1,4)
-    if SLOW: detectSingleCharXOR('Set1Challenge4.txt')
+    if SLOW: detectSingleCharXOR('etc/Set1Challenge4.txt')
 
     ChallengeTitle(1,5)
     repeatKeyXOR("Burning 'em, if you ain't quick and nimble\n"
@@ -66,13 +67,13 @@ def __main__():
     PrintResult(37, (hammDist(s1, s2)))
 
     ChallengeTitle(1,6)
-    repeatKeyXORcrack('Set1Challenge6.txt', 2, 40)
+    repeatKeyXORcrack('etc/Set1Challenge6.txt', 2, 40)
 
     ChallengeTitle(1,7)
-    decryptAES_mode_ECB('Set1Challenge7.txt', 'YELLOW SUBMARINE')
+    decryptAES_mode_ECB('etc/Set1Challenge7.txt', 'YELLOW SUBMARINE')
     
     ChallengeTitle(1,8)
-    find_AES_mode_ECB('Set1Challenge8.txt')
+    find_AES_mode_ECB('etc/Set1Challenge8.txt')
 
 
 def find_AES_mode_ECB(fn):
@@ -92,6 +93,9 @@ def find_AES_mode_ECB(fn):
             print('Duplicate blocks found in line nr: %d , dupes: %s' % 
                 (i, dupes))
 
+    # No check given
+    PrintResult('Line nr: 132', 'Line nr: 132')
+
 
 def decryptAES_mode_ECB(fn, key):
     print('File: %s' % fn)
@@ -108,14 +112,11 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     print('Key-Length : %d - %d' % (minKey, maxKey))
     print(LINE)
     b64 = read_file_strip(fn)
-    #print('base64 of crypt repeating-key XOR : %s' % b64)
-    #print(base64ToBytes(b64))
     b = bytesToHex(base64ToBytes(b64))
     binStr = bytesToBin(b)
     print(len(binStr))
     keysize = []
     
-
     for s in range(minKey, maxKey + 1):
         sb = s*8
         hDist = float()
@@ -141,35 +142,18 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     ks = best[1]
     
     # Crack it
-    # 5
-    #cb = [b[i % ks] for i in range(0, len(b))]
-    #print(len(b))
-    #print(b)
-    # 6
     sb = [''] * ks
     for i in range(0,int(len(b)),2):
         sb[(int(i/2) % ks)] += b[i:i+2].decode('ascii')
-        #print(b[i:i+2].decode('ascii'))
-    #for i, block in enumerate(cb):
-    #    sb[i % ks] += block
     
     # solve Keychar 1 .. n
     ckey = ''
     ctext = []
     for i,elmt in enumerate(sb):
-        #print(elmt)
-        #print(list(elmt))
-        #hexstr = ''.join(hex(b)[2:] for b in elmt)
-        #hexstr = ''.join(format(x, '02x') for x in elmt)
-        #hexstr = elmt.decode('ascii')
-        #print(hexstr)
-        #print(len(elmt))
-
-        #print(singleByteXORcrack(elmt))
         ckey += bytesXORcrack(elmt)[1]
         ctext.append(bytesXORcrack(elmt)[2].decode('ascii'))
-        #print( bytesXORcrack(elmt))
     print('>> Found Key: %s' % ckey)
+    # no check given 
     PrintResult(ckey, 'Terminator X: Bring the noise')
     
     rtext = ''
@@ -180,17 +164,6 @@ def repeatKeyXORcrack(fn, minKey, maxKey):
     print(rtext)
     
     return True
-
-
-def read_file(path):
-    return open(path, encoding='latin-1')
-
-def read_file_strip(path):
-    fobj = open(path, encoding='latin-1')
-    ret = ''
-    for line in fobj:
-        ret += line.strip()
-    return ret
 
 
 def repeatKeyXOR(text, key, test):
@@ -230,7 +203,8 @@ def detectSingleCharXOR(fn):
     best = b''                                                                     
     for i in range(top):                                                           
         if i == 0: best = res[i]                         
-        print('>> Score: %d :: Key: %s :: result = %s ' % (res[i][0], res[i][1], res[i][2]))
+        print('>> Score: %d :: Key: %s :: result = %s ' %
+            (res[i][0], res[i][1], res[i][2]))
     PrintResult(res[0][2], res[0][2])
 
 
