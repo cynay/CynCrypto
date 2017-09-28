@@ -300,3 +300,8 @@ def decrypt_AES_ECB(b64, key):
     obj = AES.new(key, AES.MODE_ECB)
     b = base64.b64decode(b64)
     return obj.decrypt(b)
+
+
+def pkcs7(txt, blocksize):
+    pad = blocksize % len(txt)
+    return txt.encode() + (b'\x04' * pad)
