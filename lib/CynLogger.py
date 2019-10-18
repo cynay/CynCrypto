@@ -78,7 +78,7 @@ def load_default():
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "INFO",
                 "formatter": "simple",
-                "filename": "/home/cyn/coding/CynCrypto/var/info.log",
+                "filename": "/home/cyn/code/CynCrypto/var/info.log",
                 "maxBytes": 1048576,
                 "backupCount": 20,
                 "encoding": "utf8"
@@ -87,7 +87,7 @@ def load_default():
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "ERROR",
                 "formatter": "simple",
-                "filename": "/home/cyn/coding/CynCrypto/var/errors.log",
+                "filename": "/home/cyn/code/CynCrypto/var/errors.log",
                 "maxBytes": 1048576,
                 "backupCount": 20,
                 "encoding": "utf8"

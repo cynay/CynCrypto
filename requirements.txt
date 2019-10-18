@@ -2,3 +2,5 @@ sphinx
 nose
 colorama
 crypto
+distance
+pycryptodome
